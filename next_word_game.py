@@ -46,7 +46,7 @@ def play(characters):
       raise GameOverException("Game Over")
 
 
-  # first, let's if we have encountered these characters before
+  # first, let's see if we have encountered these characters before
   for character_seen, character_seen_word_suggestions in CHARACTERS_SEEN.iteritems():
     if character_seen.startswith(characters) or characters.startswith(character_seen):
       return get_next_suitable_character(characters, character_seen_word_suggestions)
@@ -65,8 +65,8 @@ def play(characters):
       words_with_chances = [word for word in bucket_of_words if len(word) % 2 == 0]
     else:
       """
-      It's the user initiating the game, biase the game to prevent
-      a scenario where I'll be forced to provide the last character by excluding
+      If it's the user initiating the game, biase the game to prevent
+      a scenario where the computer will be forced to provide the last character by excluding
       words with even character count
       """
       words_with_chances = [word for word in bucket_of_words if len(word) % 2 != 0]
