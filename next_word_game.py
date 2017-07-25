@@ -1,10 +1,10 @@
 """
- Word of words game
+ Game of words
 
  Main function : play
 
- To test the game, call the test_the_game, which by default is called, and it will show the leakage
- of the next workds
+ To test the game, call the test_the_game, which by default is called, will start
+ an interactive play on the console
 """
 BUCKET_OF_WORDS_FILE = 'words.txt'
 
