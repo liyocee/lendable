@@ -10,14 +10,42 @@ BUCKET_OF_WORDS_FILE = 'words.txt'
 
 CHARACTERS_SEEN = {}
 
-SHOW_LEAKAGE = True
+SHOW_LEAKAGE = True # Set this to false if you do not want to see the next bug of words from which an answer is picked
 
 class GameOverException(Exception):
   pass
 
 def play(characters):
-
   global CHARACTERS_SEEN
+
+  # return longest word given two words
+  def word_length_comparator(word1, word2):
+    if len(word1) > len(word2):
+      return 1
+    elif len(word1) == len(word2):
+      return 0
+    else:
+      return -1
+
+  # get next suitable character
+  def get_next_suitable_character(characters, next_suitable_words):
+    global CHARACTERS_SEEN
+    # let's prune our dictionary
+    pruned_words = [word.strip() for word in next_suitable_words if word.startswith(characters) and word != characters]
+
+    try:
+      # reset the chars seen
+      CHARACTERS_SEEN = {}
+      CHARACTERS_SEEN[characters] = pruned_words
+
+      if SHOW_LEAKAGE:
+        print "\t\t\t\t--START BUG_OF_WORDS--\n",  CHARACTERS_SEEN.values(), "\n\t\t\t\t--END BUG_OF_WORDS--\n"
+
+      return pruned_words[0][len(characters)]
+    except IndexError:
+      raise GameOverException("Game Over")
+
+
   # first, let's if we have encountered these characters before
   for character_seen, character_seen_word_suggestions in CHARACTERS_SEEN.iteritems():
     if character_seen.startswith(characters) or characters.startswith(character_seen):
@@ -49,31 +77,6 @@ def play(characters):
     CHARACTERS_SEEN[characters] = words_with_chances
 
     return get_next_suitable_character(characters, words_with_chances)
-
-def word_length_comparator(word1, word2):
-  if len(word1) > len(word2):
-    return 1
-  elif len(word1) == len(word2):
-    return 0
-  else:
-    return -1
-
-def get_next_suitable_character(characters, next_suitable_words):
-  global CHARACTERS_SEEN
-  # let's prune our dictionary
-  pruned_words = [word.strip() for word in next_suitable_words if word.startswith(characters) and word != characters]
-
-  try:
-    # reset the chars seen
-    CHARACTERS_SEEN = {}
-    CHARACTERS_SEEN[characters] = pruned_words
-
-    if SHOW_LEAKAGE:
-      print "\t\t\t\t--START BUG_OF_WORDS--\n",  CHARACTERS_SEEN.values(), "\n\t\t\t\t--END BUG_OF_WORDS--\n"
-
-    return pruned_words[0][len(characters)]
-  except IndexError:
-    raise GameOverException("Game Over")
 
 
 # function to test the game
